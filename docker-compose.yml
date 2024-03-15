@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  sonice:
+    image: 'valeriansaliou/sonic:latest'
+    ports:
+      - '1491:1491'
+    volumes:
+      - './config/sonic/config.cfg:/etc/sonic.cfg'
+      - './db/sonic:/var/lib/sonic/store/'
