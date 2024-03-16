@@ -1,3 +1,3 @@
 #!/bin/sh
 sonic -c /etc/sonic.cfg &
-pnpm run start
+pnpm run start --port 3149

@@ -21,6 +21,6 @@ RUN pnpm prune --prod
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-EXPOSE 3000
+EXPOSE 3149
 
 CMD ["/start.sh"]
