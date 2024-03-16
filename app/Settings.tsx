@@ -1,8 +1,10 @@
 'use client';
 
+import { fetcher } from "@/lib/fetcher";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Input } from "@nextui-org/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import useSWR from "swr";
 
 type Props = {
     onSuccessImport: () => void
@@ -14,6 +16,7 @@ export default function Settings({ onSuccessImport }: Props) {
     const [transmissionUsername, setTransmissionUsername] = useState("")
     const [transmissionPassword, setTransmissionPassword] = useState("")
     const [isLoadingImport, setIsLoadingImport] = useState(false)
+    const { data: importData, mutate } = useSWR('/api/search/import', fetcher, { refreshInterval: isLoadingImport ? 1000 : 0, revalidateOnFocus: false })
     const toastImportingId = useRef<any>(null)
     const alreadyNotified = useRef(false)
 
@@ -35,61 +38,97 @@ export default function Settings({ onSuccessImport }: Props) {
             await fetch("/api/search/import", {
                 method: "POST",
             })
+            await mutate()
         } finally {
             setIsLoadingImport(false)
         }
-    }, [])
-
-    const checkImporting = useCallback(() => {
-        if (toastImportingId.current) {
-            return;
-        }
-
-        toastImportingId.current = toast.loading("Verificando a importação de dados...")
-
-        setInterval(async () => {
-            const response = await fetch("/api/search/import")
-
-            if (!response.ok) {
-                toast.dismiss(toastImportingId.current)
-                setIsLoadingImport(false)
-                return
-            }
-
-            const json = await response.json()
-
-            if (!json.isImporting) {
-                toast.dismiss(toastImportingId.current)
-                setIsLoadingImport(false)
-
-                if (typeof json.isSuccess !== 'undefined' && !json.isSuccess) {
-                    if (!alreadyNotified.current) {
-                        alreadyNotified.current = true
-                        toast.error(json.message)
-                    }
-                }
-
-                if (typeof json.isSuccess !== 'undefined' && json.isSuccess) {
-                    if (!alreadyNotified.current) {
-                        console.log('json.message', json.message)
-                        alreadyNotified.current = true
-                        toast.success(json.message)
-                        onSuccessImport()
-                    }
-                }
-
-                return
-            }
-
-            alreadyNotified.current = false
-            setIsLoadingImport(true)
-            toast.loading(json.progressText, { id: toastImportingId.current })
-        }, 1000)
-    }, [onSuccessImport])
+    }, [mutate])
 
     useEffect(() => {
-        checkImporting()
-    }, [checkImporting])
+        if (!importData) {
+            return
+        }
+
+        if (!importData.isImporting) {
+            setIsLoadingImport(false)
+
+            if (typeof importData.isSuccess !== 'undefined' && !importData.isSuccess) {
+                if (!alreadyNotified.current) {
+                    alreadyNotified.current = true
+                    toast.error(importData.message)
+                }
+            }
+
+            if (typeof importData.isSuccess !== 'undefined' && importData.isSuccess) {
+                if (!alreadyNotified.current) {
+                    alreadyNotified.current = true
+                    toast.success(importData.message)
+                    onSuccessImport()
+                }
+            }
+
+            if (toastImportingId.current) {
+                toast.dismiss(toastImportingId.current)
+            }
+
+            return
+        }
+
+        alreadyNotified.current = false
+        setIsLoadingImport(true)
+        toastImportingId.current = toast.loading(importData.progressText, { id: toastImportingId.current })
+    }, [importData, onSuccessImport])
+
+    // const checkImporting = useCallback(() => {
+    //     if (toastImportingId.current) {
+    //         return;
+    //     }
+
+    //     toastImportingId.current = toast.loading("Verificando a importação de dados...")
+
+    //     setInterval(async () => {
+    //         const response = await fetch("/api/search/import")
+
+    //         if (!response.ok) {
+    //             toast.dismiss(toastImportingId.current)
+    //             setIsLoadingImport(false)
+    //             return
+    //         }
+
+    //         const json = await response.json()
+
+    //         if (!json.isImporting) {
+    //             toast.dismiss(toastImportingId.current)
+    //             setIsLoadingImport(false)
+
+    //             if (typeof json.isSuccess !== 'undefined' && !json.isSuccess) {
+    //                 if (!alreadyNotified.current) {
+    //                     alreadyNotified.current = true
+    //                     toast.error(json.message)
+    //                 }
+    //             }
+
+    //             if (typeof json.isSuccess !== 'undefined' && json.isSuccess) {
+    //                 if (!alreadyNotified.current) {
+    //                     console.log('json.message', json.message)
+    //                     alreadyNotified.current = true
+    //                     toast.success(json.message)
+    //                     onSuccessImport()
+    //                 }
+    //             }
+
+    //             return
+    //         }
+
+    //         alreadyNotified.current = false
+    //         setIsLoadingImport(true)
+    //         toast.loading(json.progressText, { id: toastImportingId.current })
+    //     }, 1000)
+    // }, [onSuccessImport])
+
+    // useEffect(() => {
+    //     checkImporting()
+    // }, [checkImporting])
 
     useEffect(() => {
         setTransmissionHost(localStorage.getItem("transmissionHost") || "")

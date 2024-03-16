@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Settings from "./Settings";
 import { Button, Input, useDisclosure } from "@nextui-org/react";
 import { toast } from "sonner";
@@ -18,6 +18,10 @@ export default function Home() {
   const [isRandom, setIsRandom] = useState(false)
   const [hasMore, setHasMore] = useState(true)
 
+  const randomTitleName = useMemo(() => {
+    return titles[Math.floor(Math.random() * titles.length)]?.name
+  }, [titles])
+
   const getRandomTitles = useCallback(async (offset?: number) => {
     setIsSearching(true)
 
@@ -32,9 +36,7 @@ export default function Home() {
       const json = await response.json()
       const results = json.results || []
 
-      if (results.length < LIMIT) {
-        setHasMore(false)
-      }
+      setHasMore(results.length >= LIMIT)
 
       if (offset === 0) {
         setTitles(results)
@@ -65,9 +67,7 @@ export default function Home() {
         toast.error(json?.message || "Falha na busca de títulos")
       }
 
-      if (json.results.length < LIMIT) {
-        setHasMore(false)
-      }
+      setHasMore(json.results.length >= LIMIT)
 
       if ((offset || 0) === 0) {
         setTitles(json.results || [])
@@ -110,7 +110,7 @@ export default function Home() {
         <Input
           type="text"
           label="Séries, filmes, gêneros..."
-          placeholder={`eg: ${titles.length ? titles[Math.floor(Math.random() * titles.length)].name : "..."}`}
+          placeholder={`Ex: ${titles.length ? randomTitleName : "..."}`}
           size="sm"
           value={term}
           onChange={(e) => {

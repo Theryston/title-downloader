@@ -1,8 +1,9 @@
 'use client';
 
-import { Button, Modal, ModalBody, ModalContent, ModalHeader, Progress } from "@nextui-org/react";
+import { Modal, ModalBody, ModalContent, ModalHeader, Progress } from "@nextui-org/react";
 import { TitleType } from "./Title"
 import { useCallback, useEffect, useState } from "react";
+import Torrent from "./Torrent";
 
 type Props = {
     title: TitleType | null;
@@ -10,14 +11,14 @@ type Props = {
     onOpenChange: (isOpen: boolean) => void;
 }
 
-type Torrent = {
+export type TorrentType = {
     id: string
     torrent_title: string
     magnet: string
     title_id: string
 }
 
-type FullTitle = TitleType & { torrents: Torrent[] }
+type FullTitle = TitleType & { torrents: TorrentType[] }
 
 export default function ModalTitle({ title, isOpen, onOpenChange }: Props) {
     const [isLoading, setIsLoading] = useState(false)
@@ -61,16 +62,7 @@ export default function ModalTitle({ title, isOpen, onOpenChange }: Props) {
                     {!isLoading && (
                         <div className="flex flex-col gap-5">
                             {!fullTitle?.torrents.length && <p className="text-center text-sm">Nenhum torrent encontrado</p>}
-                            {fullTitle?.torrents.map(torrent => (
-                                <div key={torrent.id} className="flex flex-col gap-2 items-center">
-                                    <p className="text-sm text-center break-all">
-                                        {(torrent.torrent_title || 'Torrent sem título').trim()}
-                                    </p>
-                                    <Button fullWidth color="primary">
-                                        Baixar
-                                    </Button>
-                                </div>
-                            ))}
+                            {fullTitle?.torrents.map(torrent => <Torrent key={torrent.id} torrent={torrent} />)}
                         </div>
                     )}
                 </ModalBody>
