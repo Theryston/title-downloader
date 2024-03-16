@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import { getLog } from "./log";
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
     const linesCount = Number(request.nextUrl.searchParams.get('lines'))
 

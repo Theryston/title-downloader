@@ -2,6 +2,8 @@ import { NextRequest } from "next/server";
 import path from "path";
 import betterSqlite3 from 'better-sqlite3'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
     const { id } = params
 

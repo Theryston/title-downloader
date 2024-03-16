@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import Transmission from "transmission";
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: NextRequest) {
     const { transmission_host, transmission_username, transmission_password, magnetUri } = await request.json()
 

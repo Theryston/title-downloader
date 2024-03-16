@@ -3,6 +3,8 @@ import Sonic from 'sonic-channel'
 import betterSqlite3 from 'better-sqlite3'
 import path from "path"
 
+export const dynamic = 'force-dynamic'
+
 const sonicSearch = new Sonic.Search({
     host: '127.0.0.1',
     port: 1491,

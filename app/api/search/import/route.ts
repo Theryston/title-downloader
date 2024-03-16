@@ -4,6 +4,8 @@ import fs from "fs"
 import Sonic from 'sonic-channel'
 import { addLog, cleanLog, getLog } from '../../logger/log'
 
+export const dynamic = 'force-dynamic'
+
 const sonicIngest = new Sonic.Ingest({
     host: '127.0.0.1',
     port: 1491,
@@ -14,6 +16,9 @@ sonicIngest.connect({
     connected() {
         console.log('Sonic ingest connected')
     },
+    error(err: any) {
+        console.log('Sonic ingest error', err)
+    }
 })
 
 const GITHUB_PROJECT_NAME = "Theryston/comandotorrent.info-indexer"

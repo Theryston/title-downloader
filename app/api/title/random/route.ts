@@ -2,6 +2,8 @@ import path from "path"
 import betterSqlite3 from 'better-sqlite3'
 import { NextRequest } from "next/server"
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
     try {
         const dbPath = path.join(process.cwd(), 'db', 'Database.sqlite3')
@@ -31,6 +33,7 @@ export async function GET(request: NextRequest) {
 
         return Response.json({ amount: all_metadata.length, total, results: all_metadata })
     } catch (error) {
+        console.log('Get random error', error)
         return Response.json(
             {
                 message: "Por favor, importe os dados antes"
