@@ -2,8 +2,14 @@ import { getRandom } from "./api/title/random";
 import Home from "./content"
 import { LIMIT } from "@/lib/constants";
 
-export default async function Page() {
-    const response = await getRandom({ limit: LIMIT, offset: 0 })
+export const dynamic = 'force-dynamic';
 
-    return <Home titlesProp={response.results} />
+export default async function Page() {
+    try {
+        const response = await getRandom({ limit: LIMIT, offset: 0 })
+
+        return <Home titlesProp={response.results} />
+    } catch {
+        return <>Error fetching titles</>
+    }
 }
