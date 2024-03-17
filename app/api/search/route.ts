@@ -59,7 +59,7 @@ export const GET = async (request: NextRequest) => {
     } catch (error) {
         return Response.json(
             {
-                message: "Por favor, importe os dados antes"
+                message: "Falha na busca"
             },
             {
                 status: 404
