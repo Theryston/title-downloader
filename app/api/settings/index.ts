@@ -23,12 +23,10 @@ export async function getSettings(): Promise<Settings> {
 }
 
 export async function setSettings(settings: Settings) {
+    settings.hasSet = true
+
     if (!fs.existsSync(projectFolder)) {
         fs.mkdirSync(projectFolder, { recursive: true })
-    }
-
-    if (!fs.existsSync(settingsPath)) {
-        settings.hasSet = true
     }
 
     fs.writeFileSync(settingsPath, JSON.stringify(settings))
