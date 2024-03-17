@@ -1,7 +1,8 @@
 #!/bin/sh
+docker compose down
 rm -rf db
 mkdir db
 chmod -R 777 db
-sonic -c /etc/sonic.cfg &
+docker compose up -d
 node ./scripts/import-data.mjs
-pnpm next start --port 3149
+pnpm next dev --port 3149

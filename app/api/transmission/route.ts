@@ -1,15 +1,17 @@
 import { NextRequest } from "next/server";
 import Transmission from "transmission";
+import { getSettings } from "../settings";
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
-    const { transmission_host, transmission_username, transmission_password, magnetUri } = await request.json()
+    const { magnetUri } = await request.json()
+    const { transmissionHost, transmissionUsername, transmissionPassword } = await getSettings()
 
-    if (!transmission_host) {
+    if (!transmissionHost) {
         return new Response(
             JSON.stringify({
-                message: "Por favor, adicione o endereço do seu transmission"
+                message: "Por favor, click em configurações e coloque o endereço do transmission"
             }),
             { status: 400 }
         )
@@ -24,14 +26,14 @@ export async function POST(request: NextRequest) {
         )
     }
 
-    const transmissionUrl = new URL(`http://${transmission_host.replace("http://", "").replace("https://", "")}`)
+    const transmissionUrl = new URL(`http://${transmissionHost.replace("http://", "").replace("https://", "")}`)
     const { hostname: host, port } = transmissionUrl
 
     const transmission = new Transmission({
         host,
         port: port,
-        username: transmission_username,
-        password: transmission_password
+        username: transmissionUsername,
+        password: transmissionPassword
     });
 
     try {
@@ -80,29 +82,26 @@ export async function POST(request: NextRequest) {
     }
 }
 
-export async function GET(request: NextRequest) {
-    const search = request.nextUrl.searchParams
-    const transmission_host = search.get('transmission_host')
-    const transmission_username = search.get('transmission_username')
-    const transmission_password = search.get('transmission_password')
+export async function GET() {
+    const { transmissionHost, transmissionUsername, transmissionPassword } = await getSettings()
 
-    if (!transmission_host) {
+    if (!transmissionHost) {
         return new Response(
             JSON.stringify({
-                message: "Por favor, adicione o endereço do seu transmission"
+                message: "Por favor, click em configurações e coloque o endereço do transmission"
             }),
             { status: 400 }
         )
     }
 
-    const transmissionUrl = new URL(`http://${transmission_host.replace("http://", "").replace("https://", "")}`)
+    const transmissionUrl = new URL(`http://${transmissionHost.replace("http://", "").replace("https://", "")}`)
     const { hostname: host, port } = transmissionUrl
 
     const transmission = new Transmission({
         host,
         port: port,
-        username: transmission_username,
-        password: transmission_password
+        username: transmissionUsername,
+        password: transmissionPassword
     });
 
     try {

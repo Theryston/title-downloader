@@ -10,9 +10,6 @@ COPY ./config/sonic/config.cfg /etc/sonic.cfg
 WORKDIR /app
 
 COPY . .
-RUN mkdir db
-RUN chmod -R 777 db
-
 RUN npm install -g pnpm
 RUN pnpm install
 RUN pnpm run build
