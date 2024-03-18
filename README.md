@@ -30,3 +30,9 @@ nano ~/umbrel/app-data/transmission/docker-compose.yml
 ```
 
 ![img](https://i.imgur.com/1Q1lT5D.png)
+
+And then run:
+
+```bash
+sudo ~/umbrel/scripts/app restart transmission
+```
