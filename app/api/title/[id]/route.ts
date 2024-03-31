@@ -38,7 +38,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         .get(metadata?.title_id)
 
     if (torrents.length === 1 && !torrents[0].torrent_title) {
-
         torrents[0].torrent_title = page?.page_title
     }
 

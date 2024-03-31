@@ -1,11 +1,12 @@
 'use client';
 
-import { Button } from "@nextui-org/react";
+import { Button, Input } from "@nextui-org/react";
 import { TorrentType } from "./ModalTitle";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
+import { ArrowDownIcon, ArrowTopRightIcon, CopyIcon } from "@radix-ui/react-icons";
 
 export default function Torrent({ torrent }: { torrent: TorrentType }) {
     const [isOnTransmission, setIsOnTransmission] = useState(false)
@@ -63,24 +64,48 @@ export default function Torrent({ torrent }: { torrent: TorrentType }) {
             <p className="text-sm text-center break-all">
                 {(torrent.torrent_title || 'Torrent sem título').trim()}
             </p>
-            {!isOnTransmission && (
-                <Button fullWidth color="primary" onClick={downloadTorrent} isLoading={isLoading}>
-                    Baixar
-                </Button>
-            )}
-            {isOnTransmission && (
-                <Button
-                    fullWidth
-                    color="primary"
-                    onClick={() => {
-                        const transmissionHost = (settings.transmissionHost || "").trim().replace("http://", "").replace("https://", "")
-                        const url = `http://${transmissionHost}/transmission/web/`
-                        window.open(url, "_blank")
-                    }}
-                >
-                    Abrir transmission
-                </Button>
-            )}
+            <Input
+                type="text"
+                readOnly
+                value={torrent.magnet}
+                classNames={{
+                    inputWrapper: 'h-12',
+                }}
+                endContent={
+                    <div className="flex gap-2">
+                        {!isOnTransmission && (
+                            <Button color="primary" onClick={downloadTorrent} isLoading={isLoading} isIconOnly size="sm">
+                                <ArrowDownIcon />
+                            </Button>
+                        )}
+                        {isOnTransmission && (
+                            <Button
+                                color="primary"
+                                onClick={() => {
+                                    const transmissionHost = (settings.transmissionHost || "").trim().replace("http://", "").replace("https://", "")
+                                    const url = `http://${transmissionHost}/transmission/web/`
+                                    window.open(url, "_blank")
+                                }}
+                                isIconOnly
+                                size="sm"
+                            >
+                                <ArrowTopRightIcon />
+                            </Button>
+                        )}
+                        <Button
+                            color="warning"
+                            onClick={() => {
+                                navigator.clipboard.writeText(torrent.magnet)
+                                toast.success("Copiado para a área de transferência")
+                            }}
+                            isIconOnly
+                            size="sm"
+                        >
+                            <CopyIcon />
+                        </Button>
+                    </div>
+                }
+            />
         </div>
     )
 }

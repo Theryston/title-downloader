@@ -18,7 +18,7 @@ export type TorrentType = {
     title_id: string
 }
 
-type FullTitle = TitleType & { torrents: TorrentType[] }
+type FullTitle = TitleType & { title: TitleType, torrents: TorrentType[] }
 
 export default function ModalTitle({ title, isOpen, onOpenChange }: Props) {
     const [isLoading, setIsLoading] = useState(false)
@@ -48,7 +48,12 @@ export default function ModalTitle({ title, isOpen, onOpenChange }: Props) {
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top">
             <ModalContent>
                 <ModalHeader className="flex flex-col gap-1 items-center text-center">
-                    {title?.name}
+                    <h1 className="text-2xl font-bold">
+                        {title?.name}
+                    </h1>
+                    <p className="text-sm">
+                        TMDB ID: {parseInt(fullTitle?.title.tmdb_id || "0")}
+                    </p>
                 </ModalHeader>
                 <ModalBody className="w-full mb-5">
                     {isLoading &&

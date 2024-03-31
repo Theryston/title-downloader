@@ -6,6 +6,7 @@ export type TitleType = {
     id: string;
     name: string;
     poster_url: string;
+    tmdb_id: string;
 }
 
 export default function Title({ title, onClick }: { title: TitleType, onClick: () => void }) {
