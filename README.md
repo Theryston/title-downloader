@@ -30,3 +30,5 @@ nano ~/umbrel/app-data/transmission/docker-compose.yml
 ```
 
 ![img](https://i.imgur.com/1Q1lT5D.png)
+
+Remember to add http://localhost:9091 in "Endereço do transmission" NOT http://umbrel.local:9091
